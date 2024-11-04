@@ -19,13 +19,6 @@ pygame.display.set_caption("juegardium")
 clock = pygame.time.Clock()
 FPS = 60
 
-p1x = 40
-p1y = SCREEN_HEIGHT - FLOOR_HEIGHT - P1_HEIGHT
-vel1x = 0.6
-vel1y = 0
-acc1x = 0
-gravity = 0.01
-
 fighter_1 = Character(200, SCREEN_HEIGHT - FLOOR_HEIGHT - 100)
 fighter_2 = Character(700, SCREEN_HEIGHT - FLOOR_HEIGHT - 100)
 
