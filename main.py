@@ -12,15 +12,14 @@ BLUE = (0,0,255)
 SCREEN_WIDTH=1000
 SCREEN_HEIGHT=600
 FLOOR_HEIGHT=150
-P1_HEIGHT = 100
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("juegardium")
 clock = pygame.time.Clock()
 FPS = 60
 
-fighter_1 = Character(200, SCREEN_HEIGHT - FLOOR_HEIGHT - 100)
-fighter_2 = Character(700, SCREEN_HEIGHT - FLOOR_HEIGHT - 100)
+fighter_1 = Character(200, SCREEN_HEIGHT - FLOOR_HEIGHT - 140)
+fighter_2 = Character(700, SCREEN_HEIGHT - FLOOR_HEIGHT - 140)
 
 def update_screen():
     #Fondo y piso:
