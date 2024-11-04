@@ -18,8 +18,21 @@ pygame.display.set_caption("juegardium")
 clock = pygame.time.Clock()
 FPS = 60
 
-fighter_1 = Character(200, SCREEN_HEIGHT - FLOOR_HEIGHT - 140)
-fighter_2 = Character(700, SCREEN_HEIGHT - FLOOR_HEIGHT - 140)
+controls1 = {
+    'left':pygame.K_a,
+    'right':pygame.K_d,
+    'up':pygame.K_w,
+    'dash':pygame.K_y,
+}
+controls2 = {
+    'left':pygame.K_LEFT,
+    'right':pygame.K_RIGHT,
+    'up':pygame.K_UP,
+    'dash':pygame.K_h,
+}
+
+fighter_1 = Character(200, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls1)
+fighter_2 = Character(700, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls2)
 
 def update_screen():
     #Fondo y piso:
@@ -39,7 +52,7 @@ while True :
     key = pygame.key.get_pressed()
     if key:
         fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT)
-        # fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT)
+        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT)
     
     update_screen()
     pygame.display.update()

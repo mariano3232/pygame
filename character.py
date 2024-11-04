@@ -1,8 +1,9 @@
 import pygame
 
 class Character:
-    def __init__(self, x, y):
+    def __init__(self, x, y, controls):
         self.rect = pygame.Rect(x, y, 90, 140)
+        self.controls = controls
         self.vel_y = 0
         self.jumping = False
         self.dash = False
@@ -10,7 +11,7 @@ class Character:
         self.recovery = False
     def draw(self, screen, color):
         pygame.draw.rect(screen, color, self.rect)
-
+    
     def move(self, screen_width, screen_height, floor_height):
         SPEED = 7
         JUMPING_SPEED = 8
@@ -23,18 +24,18 @@ class Character:
         key = pygame.key.get_pressed()
 
         # Movimiento horizontal
-        if key[pygame.K_a] and not self.jumping and not self.recovery:
+        if key[self.controls['left']] and not self.jumping and not self.recovery:
             dx = -SPEED
-        if key[pygame.K_d] and not self.jumping and not self.recovery:
+        if key[self.controls['right']] and not self.jumping and not self.recovery:
             dx = SPEED
 
         # Jump
-        if key[pygame.K_w] and not self.jumping and not self.recovery:
+        if key[self.controls['up']] and not self.jumping and not self.recovery:
             self.vel_y = -20
             self.jumping = 'neutral'
-            if key[pygame.K_d]:
+            if key[self.controls['right']]:
                 self.jumping = 'right'
-            elif key[pygame.K_a]:
+            elif key[self.controls['left']]:
                 self.jumping = 'left'
 
         self.vel_y += GRAVITY
@@ -50,10 +51,10 @@ class Character:
         elif self.jumping == 'neutral':
             dx = 0
         # Dash
-        if key[pygame.K_y] and self.dash_timer == 0 and not self.recovery and not self.dash and (not self.jumping or self.rect.bottom < 300):
+        if key[self.controls['dash']] and self.dash_timer == 0 and not self.recovery and not self.dash and (not self.jumping or self.rect.bottom < 300):
             self.dash_timer = DASH_DURATION
             self.dash  = DASH_SPEED
-            if key[pygame.K_a]:
+            if key[self.controls['left']]:
                 self.dash  = -DASH_SPEED
 
         if self.dash:
