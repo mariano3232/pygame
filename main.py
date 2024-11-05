@@ -8,6 +8,8 @@ WHITE = (255,255,255)
 GREY = (200,200,200)
 RED = (255,0,0)
 BLUE = (0,0,255)
+LIGHTBLUE = (0,255,255)
+OLIVE = (128,128,0)
 
 SCREEN_WIDTH=1000
 SCREEN_HEIGHT=600
@@ -38,8 +40,8 @@ fighter_2 = Character(700, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls2)
 
 def update_screen():
     #Fondo y piso:
-    screen.fill(GREY)
-    pygame.draw.rect(screen, BLACK, (0, SCREEN_HEIGHT - FLOOR_HEIGHT , SCREEN_WIDTH,  FLOOR_HEIGHT))
+    screen.fill(LIGHTBLUE)
+    pygame.draw.rect(screen, OLIVE, (0, SCREEN_HEIGHT - FLOOR_HEIGHT , SCREEN_WIDTH,  FLOOR_HEIGHT))
     #Personajes :
     fighter_1.draw(screen, BLUE)
     fighter_2.draw(screen, RED)

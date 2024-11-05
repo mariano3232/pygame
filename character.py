@@ -11,24 +11,24 @@ class Character:
         self.startup = 0
         self.recovery = 0
         self.attacking = 0
+        #attack
         self.attack_data = {
-            'startup': 10,
-            'active': 10,
-            'recovery': 10,
-            'rect': pygame.Rect(self.rect.centerx + 40, self.rect.centery -40, 100, 30)
+            'startup': 0,
+            'active': 0,
+            'recovery': 0,
         }
 
     def draw(self, screen, color):
         pygame.draw.rect(screen, color, self.rect)
-        if self.attacking:
-            pygame.draw.rect(screen, (255,0,0), self.attack_data['rect'])
+        if self.attacking and not self.startup:
+            pygame.draw.rect(screen, (255,0,0), pygame.Rect(self.rect.centerx + 40, self.rect.centery -40, 100, 30))
     
     def attack(self):
+        print ('aaaaaaaa')
         attack_data = {
-            'startup': 4,
-            'active': 2,
-            'recovery': 2,
-            'rect': pygame.Rect(self.rect.centerx + 40, self.rect.centery -40, 100, 30)
+            'startup': 10,
+            'active': 10,
+            'recovery': 10,
         }
         self.attack_data = attack_data
         self.startup = attack_data['startup']
@@ -44,20 +44,18 @@ class Character:
         dy = 0
 
         key = pygame.key.get_pressed()
-        hitbox = pygame.Rect(0,0,300,150)
-        pygame.draw.rect(screen, (255,0,0), hitbox)
 
         #Ataque
-        if key[self.controls['attack']]:
+        if key[self.controls['attack']] and not self.recovery and not self.startup and not self.attacking:
             self.attack()
         
         if self.startup > 0 : self.startup -= 1
         if self.attacking > 0 and not self.startup : self.attacking -= 1
         if self.attacking == 1 : self.recovery = self.attack_data['recovery']
         # Movimiento horizontal
-        if key[self.controls['left']] and not self.jumping and not self.recovery and not self.startup:
+        if key[self.controls['left']] and not self.jumping and not self.recovery and not self.startup and not self.attacking:
             dx = -SPEED
-        if key[self.controls['right']] and not self.jumping and not self.recovery and not self.startup:
+        if key[self.controls['right']] and not self.jumping and not self.recovery and not self.startup and not self.attacking:
             dx = SPEED
 
         # Jump
