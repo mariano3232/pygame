@@ -22,13 +22,15 @@ controls1 = {
     'left':pygame.K_a,
     'right':pygame.K_d,
     'up':pygame.K_w,
-    'dash':pygame.K_y,
+    'dash':pygame.K_t,
+    'attack':pygame.K_y,
 }
 controls2 = {
     'left':pygame.K_LEFT,
     'right':pygame.K_RIGHT,
     'up':pygame.K_UP,
-    'dash':pygame.K_h,
+    'dash':pygame.K_k,
+    'attack':pygame.K_l,
 }
 
 fighter_1 = Character(200, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls1)
@@ -51,8 +53,8 @@ while True :
     
     key = pygame.key.get_pressed()
     if key:
-        fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT)
-        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT)
+        fighter_1.move(screen,SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT)
+        fighter_2.move(screen,SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT)
     
     update_screen()
     pygame.display.update()

@@ -8,11 +8,33 @@ class Character:
         self.jumping = False
         self.dash = False
         self.dash_timer = 0
-        self.recovery = False
+        self.startup = 0
+        self.recovery = 0
+        self.attacking = 0
+        self.attack_data = {
+            'startup': 10,
+            'active': 10,
+            'recovery': 10,
+            'rect': pygame.Rect(self.rect.centerx + 40, self.rect.centery -40, 100, 30)
+        }
+
     def draw(self, screen, color):
         pygame.draw.rect(screen, color, self.rect)
+        if self.attacking:
+            pygame.draw.rect(screen, (255,0,0), self.attack_data['rect'])
     
-    def move(self, screen_width, screen_height, floor_height):
+    def attack(self):
+        attack_data = {
+            'startup': 4,
+            'active': 2,
+            'recovery': 2,
+            'rect': pygame.Rect(self.rect.centerx + 40, self.rect.centery -40, 100, 30)
+        }
+        self.attack_data = attack_data
+        self.startup = attack_data['startup']
+        self.attacking = attack_data['active']
+
+    def move(self, screen, screen_width, screen_height, floor_height):
         SPEED = 7
         JUMPING_SPEED = 8
         DASH_SPEED = 25  
@@ -22,11 +44,20 @@ class Character:
         dy = 0
 
         key = pygame.key.get_pressed()
+        hitbox = pygame.Rect(0,0,300,150)
+        pygame.draw.rect(screen, (255,0,0), hitbox)
 
+        #Ataque
+        if key[self.controls['attack']]:
+            self.attack()
+        
+        if self.startup > 0 : self.startup -= 1
+        if self.attacking > 0 and not self.startup : self.attacking -= 1
+        if self.attacking == 1 : self.recovery = self.attack_data['recovery']
         # Movimiento horizontal
-        if key[self.controls['left']] and not self.jumping and not self.recovery:
+        if key[self.controls['left']] and not self.jumping and not self.recovery and not self.startup:
             dx = -SPEED
-        if key[self.controls['right']] and not self.jumping and not self.recovery:
+        if key[self.controls['right']] and not self.jumping and not self.recovery and not self.startup:
             dx = SPEED
 
         # Jump
