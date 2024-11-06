@@ -119,6 +119,17 @@ class Character:
                 self.recovery = 7
                 if self.jumping : self.recovery = 15
                 self.dash = False
+        #Colisiones 
+        if self.rect.colliderect(enemy.rect):
+            # horizontales
+            if self.rect.right > enemy.rect.left and self.rect.left < enemy.rect.left:
+                self.rect.right = enemy.rect.left
+            elif self.rect.left < enemy.rect.right and self.rect.right > enemy.rect.right:
+                self.rect.left = enemy.rect.right
+            # verticales
+            if self.rect.bottom < enemy.rect.top and self.rect.top < enemy.rect.top:
+                if self.rect.centerx > enemy.rect.centerx : dx = 10
+                else: dx = -10
 
         #Recovery
         if self.recovery > 0:
