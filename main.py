@@ -43,8 +43,8 @@ def update_screen():
     screen.fill(LIGHTBLUE)
     pygame.draw.rect(screen, OLIVE, (0, SCREEN_HEIGHT - FLOOR_HEIGHT , SCREEN_WIDTH,  FLOOR_HEIGHT))
     #Personajes :
-    fighter_1.draw(screen, BLUE)
-    fighter_2.draw(screen, RED)
+    fighter_1.draw(screen, BLUE, fighter_2)
+    fighter_2.draw(screen, (255,255,0), fighter_1)
 
 while True : 
     clock.tick(60)
@@ -55,8 +55,8 @@ while True :
     
     key = pygame.key.get_pressed()
     if key:
-        fighter_1.move(screen,SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT)
-        fighter_2.move(screen,SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT)
+        fighter_1.move(screen,SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT,fighter_2)
+        fighter_2.move(screen,SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_HEIGHT,fighter_1)
     
     update_screen()
     pygame.display.update()

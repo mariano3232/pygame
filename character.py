@@ -5,12 +5,15 @@ class Character:
         self.rect = pygame.Rect(x, y, 90, 140)
         self.controls = controls
         self.vel_y = 0
-        self.jumping = False
-        self.dash = False
-        self.dash_timer = 0
+        self.facing_right = True
+        #status
+        self.knockback = 0
         self.startup = 0
         self.recovery = 0
         self.attacking = 0
+        self.jumping = False
+        self.dash = False
+        self.dash_timer = 0
         #attack
         self.attack_data = {
             'startup': 0,
@@ -18,13 +21,20 @@ class Character:
             'recovery': 0,
         }
 
-    def draw(self, screen, color):
+    def draw(self, screen, color, enemy):
         pygame.draw.rect(screen, color, self.rect)
         if self.attacking and not self.startup:
-            pygame.draw.rect(screen, (255,0,0), pygame.Rect(self.rect.centerx + 40, self.rect.centery -40, 100, 30))
+            hitbox = pygame.Rect(self.rect.centerx + 40 if self.facing_right else self.rect.centerx - 140, self.rect.centery -40, 100, 30)
+
+            hits = hitbox.colliderect(enemy.rect)
+            if (hits) :
+                enemy.vel_y = -5
+                enemy.knockback = 20
+
+            pygame.draw.rect(screen, (255,0,0), hitbox)
+
     
     def attack(self):
-        print ('aaaaaaaa')
         attack_data = {
             'startup': 10,
             'active': 10,
@@ -34,7 +44,7 @@ class Character:
         self.startup = attack_data['startup']
         self.attacking = attack_data['active']
 
-    def move(self, screen, screen_width, screen_height, floor_height):
+    def move(self, screen, screen_width, screen_height, floor_height, enemy):
         SPEED = 7
         JUMPING_SPEED = 8
         DASH_SPEED = 25  
@@ -44,19 +54,26 @@ class Character:
         dy = 0
 
         key = pygame.key.get_pressed()
+        #Dirección
+        if self.rect.centerx > enemy.rect.centerx : self.facing_right = False
+        else: self.facing_right = True
 
         #Ataque
-        if key[self.controls['attack']] and not self.recovery and not self.startup and not self.attacking:
+        if key[self.controls['attack']] and not self.recovery and not self.startup and not self.attacking and not self.knockback:
             self.attack()
         
         if self.startup > 0 : self.startup -= 1
         if self.attacking > 0 and not self.startup : self.attacking -= 1
         if self.attacking == 1 : self.recovery = self.attack_data['recovery']
         # Movimiento horizontal
-        if key[self.controls['left']] and not self.jumping and not self.recovery and not self.startup and not self.attacking:
+        if key[self.controls['left']] and not self.jumping and not self.recovery and not self.startup and not self.attacking and not self.knockback:
             dx = -SPEED
-        if key[self.controls['right']] and not self.jumping and not self.recovery and not self.startup and not self.attacking:
+        if key[self.controls['right']] and not self.jumping and not self.recovery and not self.startup and not self.attacking and not self.knockback:
             dx = SPEED
+        # knockback
+        if self.knockback>0:
+            dx = -self.knockback if self.facing_right else self.knockback
+            self.knockback-=1
 
         # Jump
         if key[self.controls['up']] and not self.jumping and not self.recovery:
@@ -82,9 +99,11 @@ class Character:
         # Dash
         if key[self.controls['dash']] and self.dash_timer == 0 and not self.recovery and not self.dash and (not self.jumping or self.rect.bottom < 300):
             self.dash_timer = DASH_DURATION
-            self.dash  = DASH_SPEED
-            if key[self.controls['left']]:
+            self.dash  = DASH_SPEED if self.facing_right else -DASH_SPEED
+            if key[self.controls['left']] and self.facing_right:
                 self.dash  = -DASH_SPEED
+            if key[self.controls['right']] and not self.facing_right:
+                self.dash  = DASH_SPEED
 
         if self.dash:
             #dash saltando
