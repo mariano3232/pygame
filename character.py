@@ -1,9 +1,10 @@
 import pygame
 
 class Character:
-    def __init__(self, x, y, controls):
+    def __init__(self, x, y, controls,attacks):
         self.rect = pygame.Rect(x, y, 90, 140)
         self.controls = controls
+        self.attacks = attacks
         self.vel_y = 0
         self.facing_right = True
         #status
@@ -19,12 +20,21 @@ class Character:
             'startup': 0,
             'active': 0,
             'recovery': 0,
+            'position':[0,0],
+            'width':0,
+            'height':0,
         }
 
     def draw(self, screen, color, enemy):
         pygame.draw.rect(screen, color, self.rect)
+
         if self.attacking and not self.startup:
-            hitbox = pygame.Rect(self.rect.centerx + 40 if self.facing_right else self.rect.centerx - 140, self.rect.centery -40, 100, 30)
+            hitbox = pygame.Rect(
+                self.rect.centerx + self.attack_data['position'][0] if self.facing_right else self.rect.centerx - self.attack_data['position'][0] - self.attack_data['width'],
+                self.rect.centery + self.attack_data['position'][1],
+                self.attack_data['width'],
+                self.attack_data['height'],
+            )
 
             hits = hitbox.colliderect(enemy.rect)
             if (hits) :
@@ -34,12 +44,7 @@ class Character:
             pygame.draw.rect(screen, (255,0,0), hitbox)
 
     
-    def attack(self):
-        attack_data = {
-            'startup': 10,
-            'active': 10,
-            'recovery': 10,
-        }
+    def attack(self, attack_data):
         self.attack_data = attack_data
         self.startup = attack_data['startup']
         self.attacking = attack_data['active']
@@ -58,9 +63,13 @@ class Character:
         if self.rect.centerx > enemy.rect.centerx : self.facing_right = False
         else: self.facing_right = True
 
-        #Ataque
-        if key[self.controls['attack']] and not self.recovery and not self.startup and not self.attacking and not self.knockback:
-            self.attack()
+        #Ataques
+        if key[self.controls['attack1']] and not self.recovery and not self.startup and not self.attacking and not self.knockback:
+            self.attack(self.attacks[0])
+        if key[self.controls['attack2']] and not self.recovery and not self.startup and not self.attacking and not self.knockback:
+            self.attack(self.attacks[1])
+        if key[self.controls['attack3']] and not self.recovery and not self.startup and not self.attacking and not self.knockback:
+            self.attack(self.attacks[2])
         
         if self.startup > 0 : self.startup -= 1
         if self.attacking > 0 and not self.startup : self.attacking -= 1
@@ -90,11 +99,11 @@ class Character:
             dy = screen_height - floor_height - self.rect.bottom
             if self.jumping : self.recovery = 3
             self.jumping = False
-        if self.jumping == 'right':
+        if self.jumping == 'right' and not self.knockback:
             dx = JUMPING_SPEED
-        elif self.jumping == 'left':
+        elif self.jumping == 'left' and not self.knockback:
             dx = -JUMPING_SPEED
-        elif self.jumping == 'neutral':
+        elif self.jumping == 'neutral' and not self.knockback:
             dx = 0
         # Dash
         if key[self.controls['dash']] and self.dash_timer == 0 and not self.recovery and not self.dash and (not self.jumping or self.rect.bottom < 300):
@@ -125,25 +134,12 @@ class Character:
             if self.rect.right > enemy.rect.left and self.rect.left < enemy.rect.left:
                 self.rect.right = enemy.rect.left
             elif self.rect.left < enemy.rect.right and self.rect.right > enemy.rect.right:
-                self.rect.left = enemy.rect.right  
-            if self.rect.centerx == enemy.rect.centerx and self.rect.bottom < enemy.rect.bottom :  
-                print ("aaaaaa")    
+                self.rect.left = enemy.rect.right
+            # Corner
+            if self.rect.centerx == enemy.rect.centerx and self.rect.bottom < enemy.rect.bottom :    
                 if self.rect.centerx > screen_width/2:
                     dx = -10
                 else : dx = 10
-
-            #if self.rect.centerx == enemy.rect.centerx :
-            # verticales
-            # if self.rect.bottom < enemy.rect.top and self.rect.top < enemy.rect.top:
-            #     print("aaaaaaaaaaaa")
-            #     if self.rect.centerx > enemy.rect.centerx : dx = 10
-            #     else: dx = -10
-                
-                # if self.rect.centerx == enemy.rect.centerx :
-                    
-                #     if self.rect.centerx > screen_width/2 :
-                #         dx = -10
-                #     else : dx = 10
 
         #Recovery
         if self.recovery > 0:

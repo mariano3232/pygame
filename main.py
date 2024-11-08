@@ -24,19 +24,76 @@ controls1 = {
     'left':pygame.K_a,
     'right':pygame.K_d,
     'up':pygame.K_w,
-    'dash':pygame.K_t,
-    'attack':pygame.K_y,
+    'dash':pygame.K_g,
+    'attack1':pygame.K_t,
+    'attack2':pygame.K_y,
+    'attack3':pygame.K_u,
 }
 controls2 = {
     'left':pygame.K_LEFT,
     'right':pygame.K_RIGHT,
     'up':pygame.K_UP,
-    'dash':pygame.K_k,
-    'attack':pygame.K_l,
+    'dash':pygame.K_m,
+    'attack1':pygame.K_j,
+    'attack2':pygame.K_k,
+    'attack3':pygame.K_l,
 }
 
-fighter_1 = Character(200, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls1)
-fighter_2 = Character(700, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls2)
+attacks1 = [
+    { 
+        'startup': 10,
+        'active': 10,
+        'recovery': 10,
+        'position': [10,-40],
+        'width':140,
+        'height':30,
+    },
+    { 
+        'startup': 40,
+        'active': 15,
+        'recovery': 20,
+        'position': [10,-40],
+        'width':150,
+        'height':70,
+    },
+    { 
+        'startup': 10,
+        'active': 10,
+        'recovery': 10,
+        'position': [30,-140],
+        'width':60,
+        'height':100,
+    },
+]
+attacks2 = [
+    { 
+        'startup': 5,
+        'active': 5,
+        'recovery': 5,
+        'position': [10,-40],
+        'width':100,
+        'height':30,
+    },
+    { 
+       'startup': 30,
+        'active': 10,
+        'recovery': 10,
+        'position': [30,30],
+        'width':150,
+        'height':30,
+    },
+    { 
+        'startup': 30,
+        'active': 15,
+        'recovery': 20,
+        'position': [-100,-140],
+        'width':200,
+        'height':70,
+    },
+]
+
+fighter_1 = Character(200, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls1, attacks1)
+fighter_2 = Character(700, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls2, attacks2)
 
 def update_screen():
     #Fondo y piso:
