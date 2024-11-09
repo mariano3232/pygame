@@ -1,5 +1,6 @@
 import pygame, sys 
 from character import Character
+import pygame.font
 
 pygame.init()
 
@@ -15,6 +16,7 @@ SCREEN_WIDTH=1000
 SCREEN_HEIGHT=600
 FLOOR_HEIGHT=150
 
+font = pygame.font.Font(None, 20)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("juegardium")
 clock = pygame.time.Clock()
@@ -41,27 +43,30 @@ controls2 = {
 
 attacks1 = [
     { 
-        'startup': 10,
+        'startup': 5,
         'active': 10,
         'recovery': 10,
+        'damage':100,
         'position': [10,-40],
         'width':140,
         'height':30,
     },
     { 
-        'startup': 40,
+        'startup': 20,
         'active': 15,
         'recovery': 20,
+        'damage':100,
         'position': [10,-40],
         'width':150,
         'height':70,
     },
     { 
-        'startup': 10,
+        'startup': 5,
         'active': 10,
         'recovery': 10,
-        'position': [30,-140],
-        'width':60,
+        'damage':100,
+        'position': [40,-140],
+        'width':80,
         'height':100,
     },
 ]
@@ -70,22 +75,25 @@ attacks2 = [
         'startup': 5,
         'active': 5,
         'recovery': 5,
+        'damage':100,
         'position': [10,-40],
         'width':100,
         'height':30,
     },
     { 
-       'startup': 30,
+       'startup': 20,
         'active': 10,
         'recovery': 10,
+        'damage':100,
         'position': [30,30],
         'width':150,
         'height':30,
     },
     { 
-        'startup': 30,
+        'startup': 5,
         'active': 15,
         'recovery': 20,
+        'damage':100,
         'position': [-100,-140],
         'width':200,
         'height':70,
@@ -102,6 +110,20 @@ def update_screen():
     #Personajes :
     fighter_1.draw(screen, BLUE, fighter_2)
     fighter_2.draw(screen, (255,255,0), fighter_1)
+    #barras de vida
+    vida_1 = font.render(str(fighter_1.health), True, (0, 0, 0))
+    vida_2 = font.render(str(fighter_2.health), True, (0, 0, 0))
+    pygame.draw.rect(screen, GREY, (20, 20 , 400,  30))
+    pygame.draw.rect(screen, GREY, (SCREEN_WIDTH - 400 - 20, 20 , 400,  30))
+
+    health_ratio_1 = fighter_1.health * 400 /1000
+    health_ratio_2 = fighter_2.health * 400 /1000
+
+    pygame.draw.rect(screen, RED, (20, 20 , health_ratio_1,  30))
+    pygame.draw.rect(screen, RED, (SCREEN_WIDTH - 400 - 20, 20 , health_ratio_2,  30))
+
+    screen.blit(vida_1, (10, 10))
+    screen.blit(vida_2, (SCREEN_WIDTH - 100, 10))
 
 while True : 
     clock.tick(60)

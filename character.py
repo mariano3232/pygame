@@ -3,6 +3,7 @@ import pygame
 class Character:
     def __init__(self, x, y, controls,attacks):
         self.rect = pygame.Rect(x, y, 90, 140)
+        self.health = 1000
         self.controls = controls
         self.attacks = attacks
         self.vel_y = 0
@@ -16,10 +17,12 @@ class Character:
         self.dash = False
         self.dash_timer = 0
         #attack
+        self.attack_hitted = False
         self.attack_data = {
             'startup': 0,
             'active': 0,
             'recovery': 0,
+            'damage':0,
             'position':[0,0],
             'width':0,
             'height':0,
@@ -38,13 +41,17 @@ class Character:
 
             hits = hitbox.colliderect(enemy.rect)
             if (hits) :
-                enemy.vel_y = -5
-                enemy.knockback = 20
+                if not self.attack_hitted :
+                    enemy.vel_y = -5
+                    enemy.knockback = 20
+                    enemy.health -= self.attack_data['damage']
+                    self.attack_hitted = True
 
             pygame.draw.rect(screen, (255,0,0), hitbox)
 
     
     def attack(self, attack_data):
+        self.attack_hitted = False
         self.attack_data = attack_data
         self.startup = attack_data['startup']
         self.attacking = attack_data['active']
