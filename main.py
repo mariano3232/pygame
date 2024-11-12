@@ -22,6 +22,26 @@ pygame.display.set_caption("juegardium")
 clock = pygame.time.Clock()
 FPS = 60
 
+# test_sheet = pygame.image.load("assets/images/wizard.png").convert_alpha()
+# TEST_ANIMATION_STEPS = [8,8,1,8,8,3,7]
+
+test_sheet = pygame.image.load("assets/images/spritesheetfix.png").convert_alpha()
+TEST_ANIMATION_STEPS = [5,6]
+
+TEST_CHARACTER_DATA = {
+    #Tamaño de cada cuadrado de la sprite sheet en px:
+    'sheet_square_size': 458,
+    'scale': 0.5,
+    'offset':[75,50]
+}
+
+# TEST_CHARACTER_DATA = {
+#     #Tamaño de cada cuadrado de la sprite sheet en px:
+#     'sheet_square_size': 162,
+#     'scale': 2.5,
+#     'offset':[270,280]
+# }
+
 controls1 = {
     'left':pygame.K_a,
     'right':pygame.K_d,
@@ -29,7 +49,6 @@ controls1 = {
     'dash':pygame.K_g,
     'attack1':pygame.K_t,
     'attack2':pygame.K_y,
-    'attack3':pygame.K_u,
 }
 controls2 = {
     'left':pygame.K_LEFT,
@@ -38,27 +57,17 @@ controls2 = {
     'dash':pygame.K_m,
     'attack1':pygame.K_j,
     'attack2':pygame.K_k,
-    'attack3':pygame.K_l,
 }
 
-attacks1 = [
+attacks = [
     { 
-        'startup': 5,
-        'active': 10,
-        'recovery': 10,
+        'startup': 60,
+        'active': 12,
+        'recovery': 12,
         'damage':100,
-        'position': [10,-40],
-        'width':140,
+        'position': [40,-40],
+        'width':30,
         'height':30,
-    },
-    { 
-        'startup': 20,
-        'active': 15,
-        'recovery': 20,
-        'damage':100,
-        'position': [10,-40],
-        'width':150,
-        'height':70,
     },
     { 
         'startup': 5,
@@ -70,38 +79,10 @@ attacks1 = [
         'height':100,
     },
 ]
-attacks2 = [
-    { 
-        'startup': 5,
-        'active': 5,
-        'recovery': 5,
-        'damage':100,
-        'position': [10,-40],
-        'width':100,
-        'height':30,
-    },
-    { 
-       'startup': 20,
-        'active': 10,
-        'recovery': 10,
-        'damage':100,
-        'position': [30,30],
-        'width':150,
-        'height':30,
-    },
-    { 
-        'startup': 5,
-        'active': 15,
-        'recovery': 20,
-        'damage':100,
-        'position': [-100,-140],
-        'width':200,
-        'height':70,
-    },
-]
 
-fighter_1 = Character(200, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls1, attacks1)
-fighter_2 = Character(700, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls2, attacks2)
+# print("TEST_CHARACTER_DATA :",TEST_CHARACTER_DATA)
+fighter_1 = Character(200, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls1, attacks, test_sheet, TEST_ANIMATION_STEPS, TEST_CHARACTER_DATA)
+fighter_2 = Character(700, SCREEN_HEIGHT - FLOOR_HEIGHT - 140, controls2, attacks, test_sheet, TEST_ANIMATION_STEPS, TEST_CHARACTER_DATA)
 
 def update_screen():
     #Fondo y piso:
@@ -127,6 +108,8 @@ def update_screen():
 
 while True : 
     clock.tick(60)
+    fighter_1.update()
+    fighter_2.update()
     for event in pygame.event.get():
         if event.type == 256:
             pygame.quit()

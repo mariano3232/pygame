@@ -1,14 +1,22 @@
 import pygame
 
 class Character:
-    def __init__(self, x, y, controls,attacks):
-        self.rect = pygame.Rect(x, y, 90, 140)
+    def __init__(self, x, y, controls, attacks, sheet, animation_steps, animation_data):
+        self.rect = pygame.Rect(x, y, 70, 130)
         self.health = 1000
         self.controls = controls
         self.attacks = attacks
         self.vel_y = 0
         self.facing_right = True
-        #status
+        #animations
+        self.animation_steps= animation_steps
+        self.animation_list= self.load_images(sheet, animation_steps, animation_data)
+        self.animation_data=animation_data
+        self.sheet_square_size = animation_data['sheet_square_size']
+        self.action = 0 #0:idle, 1:piña,
+        self.frame_index = 0
+        self.image = self.animation_list[self.action][self.frame_index]
+        #status / timers
         self.knockback = 0
         self.startup = 0
         self.recovery = 0
@@ -27,10 +35,32 @@ class Character:
             'width':0,
             'height':0,
         }
-
+    def load_images(self, sheet, steps, animation_data) :
+        scale = animation_data['scale']
+        animations_list = []
+        square_size = 410
+        for y,animation in enumerate(steps):
+            current_animation_list=[]
+            for i in range (animation):
+                # current_image = sheet.subsurface(i*square_size , y*square_size, square_size, square_size)
+                current_image = sheet.subsurface(i*square_size , y*square_size, square_size, 400)
+                scaled_current_image = pygame.transform.scale(current_image,(square_size*scale, square_size*scale))
+                current_animation_list.append(scaled_current_image)
+            animations_list.append(current_animation_list)
+        return animations_list
+        
     def draw(self, screen, color, enemy):
-        pygame.draw.rect(screen, color, self.rect)
+        #Rectangulo / hurtbox / collision box
+        # pygame.draw.rect(screen, color, self.rect)
+        # sprite
+        img = self.image
+        correction = 0
+        if not self.facing_right:
+            img = pygame.transform.flip(self.image,1,0)
+            correction = -30
 
+        screen.blit(img, (self.rect.x - self.animation_data['offset'][0] -correction, self.rect.y - self.animation_data['offset'][1]))
+        #attack/hitbox/damage
         if self.attacking and not self.startup:
             hitbox = pygame.Rect(
                 self.rect.centerx + self.attack_data['position'][0] if self.facing_right else self.rect.centerx - self.attack_data['position'][0] - self.attack_data['width'],
@@ -38,7 +68,6 @@ class Character:
                 self.attack_data['width'],
                 self.attack_data['height'],
             )
-
             hits = hitbox.colliderect(enemy.rect)
             if (hits) :
                 if not self.attack_hitted :
@@ -49,12 +78,21 @@ class Character:
 
             pygame.draw.rect(screen, (255,0,0), hitbox)
 
-    
+    def update(self):
+        # print("self.animation_list[0] :",self.animation_list[0])
+        if pygame.time.get_ticks() % 12 == 0 :
+            # print("self.action :",self.action)
+            # print("self.frame_index :",self.frame_index)
+            self.image = self.animation_list[self.action][self.frame_index]
+            self.frame_index += 1
+            if self.frame_index == self.animation_steps[self.action] : self.frame_index = 0
+
     def attack(self, attack_data):
         self.attack_hitted = False
         self.attack_data = attack_data
         self.startup = attack_data['startup']
         self.attacking = attack_data['active']
+        self.frame_index = 0
 
     def move(self, screen, screen_width, screen_height, floor_height, enemy):
         SPEED = 7
@@ -73,10 +111,9 @@ class Character:
         #Ataques
         if key[self.controls['attack1']] and not self.recovery and not self.startup and not self.attacking and not self.knockback:
             self.attack(self.attacks[0])
+            self.action=1
         if key[self.controls['attack2']] and not self.recovery and not self.startup and not self.attacking and not self.knockback:
             self.attack(self.attacks[1])
-        if key[self.controls['attack3']] and not self.recovery and not self.startup and not self.attacking and not self.knockback:
-            self.attack(self.attacks[2])
         
         if self.startup > 0 : self.startup -= 1
         if self.attacking > 0 and not self.startup : self.attacking -= 1
@@ -151,7 +188,10 @@ class Character:
         #Recovery
         if self.recovery > 0:
             self.recovery -= 1
-            if self.recovery == 0 : self.recovery=False
+            if self.recovery == 0 : 
+                self.recovery=False
+                self.frame_index = 0
+                self.action=0
         # Bordes
         if self.rect.left + dx < 0:
             dx = -self.rect.left
